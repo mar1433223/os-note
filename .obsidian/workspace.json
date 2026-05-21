@@ -1,0 +1,238 @@
+{
+  "main": {
+    "id": "60696987d6807cf2",
+    "type": "split",
+    "children": [
+      {
+        "id": "feb5ee33d71b3683",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "80333345a20a84a9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "os：核心理论/进程 (Process).md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "进程 (Process)"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "458f1c5fc2e9e307",
+    "type": "split",
+    "children": [
+      {
+        "id": "15ea2b4e1d195e07",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6ca82d655e6cd659",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "63840fb953dd0564",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "tag:#树的存储方式",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "3dfa346e77127997",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "6333dfcbf5dc88b6",
+    "type": "split",
+    "children": [
+      {
+        "id": "0ea572d50cd8f5b6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a31f7068f10c6c61",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "os：核心理论/Pasted image 20260511120821.png",
+                "collapseAll": true,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": false
+              },
+              "icon": "links-coming-in",
+              "title": "Pasted image 20260511120821 的反向链接列表"
+            }
+          },
+          {
+            "id": "8bbc2645f3b3ff34",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "欢迎.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "欢迎 的出链列表"
+            }
+          },
+          {
+            "id": "2eda877f83cc1cb0",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "e16732bb3538945e",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "c0835607f3fb0581",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "欢迎.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "欢迎 的大纲"
+            }
+          },
+          {
+            "id": "008bb52233cee5d4",
+            "type": "leaf",
+            "state": {
+              "type": "copilot-chat-view",
+              "state": {},
+              "icon": "message-square",
+              "title": "Copilot"
+            }
+          }
+        ],
+        "currentTab": 5
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "bases:新建数据库": false,
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "copilot:Open Copilot Chat": false
+    }
+  },
+  "active": "80333345a20a84a9",
+  "lastOpenFiles": [
+    "os：核心理论/上下文切换 (Context Switch).md",
+    "os：核心理论/系统调用与陷阱 (Trap).md",
+    "os：核心理论/CPU 调度算法.md",
+    "os：核心理论/Pasted image 20260511120821.png",
+    "os：核心理论/Pasted image 20260511140114.png",
+    "os：核心理论/Pasted image 20260514081614.png",
+    "README.md",
+    "操作系统.md",
+    "os：核心理论/地址空间 (Address Space).md",
+    "copilot/copilot-conversations/你好@20260520_200847.md",
+    "copilot/copilot-conversations/你这个模型什么水平@20260520_200203.md",
+    "copilot/copilot-conversations",
+    "copilot/copilot-custom-prompts/Clip Web Page.md",
+    "copilot/copilot-custom-prompts/Clip YouTube Transcript.md",
+    "copilot/copilot-custom-prompts/Rewrite as tweet thread.md",
+    "copilot/copilot-custom-prompts/Rewrite as tweet.md",
+    "copilot/copilot-custom-prompts/Remove URLs.md",
+    "copilot/copilot-custom-prompts/Generate glossary.md",
+    "copilot/copilot-custom-prompts/Generate table of contents.md",
+    "copilot/copilot-custom-prompts/Make longer.md",
+    "copilot/copilot-custom-prompts/Make shorter.md",
+    "copilot/copilot-custom-prompts/Emojify.md",
+    "copilot/copilot-custom-prompts/Explain like I am 5.md",
+    "copilot/copilot-custom-prompts/Simplify.md",
+    "copilot/copilot-custom-prompts/Summarize.md",
+    "copilot/copilot-custom-prompts/Translate to Chinese.md",
+    "copilot/copilot-custom-prompts/Fix grammar and spelling.md",
+    "copilot/copilot-custom-prompts",
+    "copilot",
+    "os：核心理论/比例份额调度.md",
+    "os：核心理论/Pasted image 20260514081546.png",
+    "os：核心理论/机制与策略.md",
+    "未命名 1.base",
+    "未命名.base",
+    "os：复习与八股",
+    "os：实验与代码",
+    "os：核心理论",
+    "未命名.canvas"
+  ]
+}
