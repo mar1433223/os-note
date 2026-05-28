@@ -1,0 +1,12 @@
+# 忽略 Obsidian 个人插件、工作区和本地缓存
+.obsidian/
+
+# 忽略 AI 工具与插件缓存
+.copilot/
+.cline/
+.cursor/
+.vscode/
+
+# 忽略系统临时文件
+.DS_Store
+Thumbs.db
