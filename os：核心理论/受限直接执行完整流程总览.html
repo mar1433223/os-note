@@ -1,0 +1,268 @@
+
+<style>
+.panel { display: none; }
+.panel.active { display: block; }
+.tab-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 6px;
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all .15s;
+}
+.tab-btn.active {
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-primary);
+  font-weight: 500;
+}
+</style>
+
+<div style="padding: 8px 0 12px">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+    <button class="tab-btn active" onclick="show('overview')">总览</button>
+    <button class="tab-btn" onclick="show('trap')">陷阱 & 系统调用</button>
+    <button class="tab-btn" onclick="show('interrupt')">时钟中断 & 上下文切换</button>
+    <button class="tab-btn" onclick="show('reloc')">动态重定位</button>
+  </div>
+
+  <!-- 总览 -->
+  <div id="panel-overview" class="panel active">
+    <svg width="100%" viewBox="0 0 680 420" role="img">
+      <title>受限直接执行总览</title>
+      <desc>展示CPU虚拟化和内存虚拟化两大机制的关系</desc>
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- 用户进程 -->
+      <g class="node c-gray" onclick="sendPrompt('用户进程在受限直接执行中扮演什么角色？')">
+        <rect x="260" y="20" width="160" height="44" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="42" text-anchor="middle" dominant-baseline="central">用户进程（用户态）</text>
+      </g>
+
+      <!-- 两条线：系统调用 和 时钟中断 -->
+      <line x1="300" y1="64" x2="160" y2="120" class="arr" marker-end="url(#arrow)"/>
+      <text class="ts" x="200" y="98" text-anchor="middle">系统调用/陷阱</text>
+
+      <line x1="380" y1="64" x2="520" y2="120" class="arr" marker-end="url(#arrow)"/>
+      <text class="ts" x="480" y="98" text-anchor="middle">时钟中断</text>
+
+      <!-- 陷阱处理 -->
+      <g class="node c-purple" onclick="show('trap')">
+        <rect x="60" y="120" width="200" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="160" y="142" text-anchor="middle" dominant-baseline="central">陷阱 & 系统调用</text>
+        <text class="ts" x="160" y="162" text-anchor="middle" dominant-baseline="central">用户态 → 内核态 → 返回</text>
+      </g>
+
+      <!-- 上下文切换 -->
+      <g class="node c-amber" onclick="show('interrupt')">
+        <rect x="420" y="120" width="200" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="520" y="142" text-anchor="middle" dominant-baseline="central">时钟中断 & 切换</text>
+        <text class="ts" x="520" y="162" text-anchor="middle" dominant-baseline="central">抢占控制权，切换进程</text>
+      </g>
+
+      <!-- 两者都经过内核 -->
+      <line x1="160" y1="176" x2="260" y2="232" class="arr" marker-end="url(#arrow)"/>
+      <line x1="520" y1="176" x2="420" y2="232" class="arr" marker-end="url(#arrow)"/>
+
+      <!-- 内核（OS） -->
+      <g class="node c-purple" onclick="sendPrompt('操作系统内核在受限直接执行中做了什么？')">
+        <rect x="200" y="232" width="280" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="254" text-anchor="middle" dominant-baseline="central">操作系统内核（内核态）</text>
+        <text class="ts" x="340" y="274" text-anchor="middle" dominant-baseline="central">掌控CPU和内存，执行特权操作</text>
+      </g>
+
+      <!-- 内核 → 动态重定位 -->
+      <line x1="340" y1="288" x2="340" y2="324" class="arr" marker-end="url(#arrow)"/>
+
+      <!-- 动态重定位 -->
+      <g class="node c-teal" onclick="show('reloc')">
+        <rect x="200" y="324" width="280" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="346" text-anchor="middle" dominant-baseline="central">动态重定位（MMU）</text>
+        <text class="ts" x="340" y="366" text-anchor="middle" dominant-baseline="central">虚拟地址 + Base = 物理地址</text>
+      </g>
+
+      <text class="ts" x="340" y="406" text-anchor="middle">点击各模块查看详细流程 →</text>
+    </svg>
+  </div>
+
+  <!-- 陷阱 & 系统调用 -->
+  <div id="panel-trap" class="panel">
+    <svg width="100%" viewBox="0 0 680 480" role="img">
+      <title>陷阱与系统调用流程</title>
+      <desc>用户程序通过系统调用陷入内核态，内核处理后返回用户态的完整过程</desc>
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <text class="th" x="340" y="28" text-anchor="middle">陷阱 & 系统调用流程</text>
+
+      <g class="node c-gray" onclick="sendPrompt('用户程序调用fork()发生了什么？')">
+        <rect x="200" y="44" width="280" height="44" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="66" text-anchor="middle" dominant-baseline="central">用户程序调用 fork()（用户态）</text>
+      </g>
+      <line x1="340" y1="88" x2="340" y2="112" class="arr" marker-end="url(#arrow)"/>
+
+      <g class="node c-amber" onclick="sendPrompt('libc是什么，为什么系统调用要经过它？')">
+        <rect x="200" y="112" width="280" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="132" text-anchor="middle" dominant-baseline="central">libc 写入陷阱号到寄存器</text>
+        <text class="ts" x="340" y="152" text-anchor="middle" dominant-baseline="central">执行陷阱指令（syscall）</text>
+      </g>
+      <line x1="340" y1="168" x2="340" y2="192" class="arr" marker-end="url(#arrow)"/>
+
+      <g class="node c-coral" onclick="sendPrompt('用户现场保存在哪里？')">
+        <rect x="200" y="192" width="280" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="212" text-anchor="middle" dominant-baseline="central">硬件保存用户现场</text>
+        <text class="ts" x="340" y="232" text-anchor="middle" dominant-baseline="central">寄存器/PC → 内核栈，切内核态</text>
+      </g>
+      <line x1="340" y1="248" x2="340" y2="272" class="arr" marker-end="url(#arrow)"/>
+
+      <g class="node c-purple" onclick="sendPrompt('内核查陷阱表是怎么找到处理程序的？')">
+        <rect x="200" y="272" width="280" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="292" text-anchor="middle" dominant-baseline="central">内核查陷阱表执行处理程序</text>
+        <text class="ts" x="340" y="312" text-anchor="middle" dominant-baseline="central">陷阱号 → 处理程序地址</text>
+      </g>
+      <line x1="340" y1="328" x2="340" y2="352" class="arr" marker-end="url(#arrow)"/>
+
+      <g class="node c-teal" onclick="sendPrompt('从陷阱返回用户态的过程是怎样的？')">
+        <rect x="200" y="352" width="280" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="372" text-anchor="middle" dominant-baseline="central">从内核栈弹出用户现场</text>
+        <text class="ts" x="340" y="392" text-anchor="middle" dominant-baseline="central">返回用户态，程序继续执行</text>
+      </g>
+
+      <text class="ts" x="340" y="438" text-anchor="middle">陷阱表在开机时由OS设置好，用户程序无法修改</text>
+    </svg>
+  </div>
+
+  <!-- 时钟中断 & 上下文切换 -->
+  <div id="panel-interrupt" class="panel">
+    <svg width="100%" viewBox="0 0 680 520" role="img">
+      <title>时钟中断与上下文切换流程</title>
+      <desc>时钟中断触发后操作系统抢占控制权，进行进程切换的完整过程</desc>
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <text class="th" x="340" y="28" text-anchor="middle">时钟中断 & 上下文切换</text>
+
+      <g class="node c-gray" onclick="sendPrompt('进程A正在运行时发生了什么？')">
+        <rect x="200" y="44" width="280" height="44" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="66" text-anchor="middle" dominant-baseline="central">进程A正在运行（用户态）</text>
+      </g>
+      <line x1="340" y1="88" x2="340" y2="112" class="arr" marker-end="url(#arrow)"/>
+
+      <g class="node c-amber" onclick="sendPrompt('时钟中断是怎么触发的？')">
+        <rect x="200" y="112" width="280" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="132" text-anchor="middle" dominant-baseline="central">时钟芯片触发中断</text>
+        <text class="ts" x="340" y="152" text-anchor="middle" dominant-baseline="central">每隔几毫秒自动发信号给CPU</text>
+      </g>
+      <line x1="340" y1="168" x2="340" y2="192" class="arr" marker-end="url(#arrow)"/>
+
+      <g class="node c-coral" onclick="sendPrompt('保存A的用户现场存在哪里？')">
+        <rect x="200" y="192" width="280" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="212" text-anchor="middle" dominant-baseline="central">保存A的用户现场</text>
+        <text class="ts" x="340" y="232" text-anchor="middle" dominant-baseline="central">寄存器/PC → A的内核栈</text>
+      </g>
+      <line x1="340" y1="248" x2="340" y2="272" class="arr" marker-end="url(#arrow)"/>
+
+      <g class="node c-purple" onclick="sendPrompt('调度器是怎么决定切换到哪个进程的？')">
+        <rect x="200" y="272" width="280" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="292" text-anchor="middle" dominant-baseline="central">OS调度器决定切换到B</text>
+        <text class="ts" x="340" y="312" text-anchor="middle" dominant-baseline="central">保存A内核寄存器 → A的PCB</text>
+      </g>
+      <line x1="340" y1="328" x2="340" y2="352" class="arr" marker-end="url(#arrow)"/>
+
+      <g class="node c-purple" onclick="sendPrompt('切换栈指针意味着什么？')">
+        <rect x="200" y="352" width="280" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="372" text-anchor="middle" dominant-baseline="central">栈指针切换到B的内核栈</text>
+        <text class="ts" x="340" y="392" text-anchor="middle" dominant-baseline="central">从B的PCB恢复内核寄存器</text>
+      </g>
+      <line x1="340" y1="408" x2="340" y2="432" class="arr" marker-end="url(#arrow)"/>
+
+      <g class="node c-teal" onclick="sendPrompt('进程B从哪里继续执行？')">
+        <rect x="200" y="432" width="280" height="44" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="454" text-anchor="middle" dominant-baseline="central">恢复B的用户现场，B继续运行</text>
+      </g>
+
+      <text class="ts" x="340" y="500" text-anchor="middle">改变栈指针的那一刻 = 进程切换完成</text>
+    </svg>
+  </div>
+
+  <!-- 动态重定位 -->
+  <div id="panel-reloc" class="panel">
+    <svg width="100%" viewBox="0 0 680 440" role="img">
+      <title>动态重定位地址转换</title>
+      <desc>MMU通过Base和Bounds寄存器将虚拟地址转换为物理地址的过程</desc>
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <text class="th" x="340" y="28" text-anchor="middle">动态重定位（MMU地址转换）</text>
+
+      <g class="node c-gray" onclick="sendPrompt('进程发出的虚拟地址是什么？')">
+        <rect x="200" y="44" width="280" height="44" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="66" text-anchor="middle" dominant-baseline="central">进程发出虚拟地址（如 100）</text>
+      </g>
+      <line x1="340" y1="88" x2="340" y2="112" class="arr" marker-end="url(#arrow)"/>
+
+      <g class="node c-amber" onclick="sendPrompt('越界检查具体是怎么做的？')">
+        <rect x="200" y="112" width="280" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="132" text-anchor="middle" dominant-baseline="central">MMU检查：虚拟地址 &lt; Bounds？</text>
+        <text class="ts" x="340" y="152" text-anchor="middle" dominant-baseline="central">Bounds = 进程内存大小上限</text>
+      </g>
+
+      <line x1="340" y1="168" x2="180" y2="208" class="arr" marker-end="url(#arrow)"/>
+      <text class="ts" x="218" y="198" text-anchor="middle">越界</text>
+
+      <line x1="340" y1="168" x2="500" y2="208" class="arr" marker-end="url(#arrow)"/>
+      <text class="ts" x="464" y="198" text-anchor="middle">未越界</text>
+
+      <g class="node c-coral" onclick="sendPrompt('越界时操作系统怎么处理？')">
+        <rect x="60" y="208" width="220" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="170" y="228" text-anchor="middle" dominant-baseline="central">触发异常</text>
+        <text class="ts" x="170" y="248" text-anchor="middle" dominant-baseline="central">OS终止进程</text>
+      </g>
+
+      <g class="node c-teal" onclick="sendPrompt('物理地址是怎么算出来的？')">
+        <rect x="400" y="208" width="220" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="510" y="228" text-anchor="middle" dominant-baseline="central">地址转换</text>
+        <text class="ts" x="510" y="248" text-anchor="middle" dominant-baseline="central">物理地址 = 虚拟地址 + Base</text>
+      </g>
+
+      <line x1="510" y1="264" x2="510" y2="300" class="arr" marker-end="url(#arrow)"/>
+
+      <g class="node c-teal" onclick="sendPrompt('进程切换时Base和Bounds怎么处理？')">
+        <rect x="400" y="300" width="220" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="510" y="320" text-anchor="middle" dominant-baseline="central">访问物理内存</text>
+        <text class="ts" x="510" y="340" text-anchor="middle" dominant-baseline="central">数据返回给进程</text>
+      </g>
+
+      <text class="ts" x="170" y="340" text-anchor="middle">开机时OS设置Base/Bounds</text>
+      <text class="ts" x="170" y="358" text-anchor="middle">切换进程时重新加载</text>
+
+      <text class="ts" x="340" y="410" text-anchor="middle">进程永远只看到虚拟地址，物理地址对它不可见</text>
+    </svg>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.getAttribute('onclick').includes(id)) b.classList.add('active');
+  });
+}
+</script>
